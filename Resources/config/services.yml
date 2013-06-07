@@ -1,0 +1,17 @@
+parameters:
+    box_uk_qas.client_factory.pro_web.class: BoxUK\QasBundle\ClientFactory\ProWebClientFactory
+    box_uk_qas.repository.pro_web.class: BoxUK\QasBundle\Repository\ProWebRepository
+    box_uk_qas.controller.pro_web.class: BoxUK\QasBundle\Controller\ProWebController
+
+services:
+    box_uk_qas.client_factory.pro_web:
+        class: %box_uk_qas.client_factory.pro_web.class%
+        arguments: [%boxuk.qas.proweb.wsdl_url%]
+
+    box_uk_qas.repository.pro_web:
+        class: %box_uk_qas.repository.pro_web.class%
+        arguments: [@box_uk_qas.client_factory.pro_web]
+
+    box_uk_qas.controller.pro_web:
+        class: %box_uk_qas.controller.pro_web.class%
+        arguments: [@templating, @box_uk_qas.repository.pro_web]

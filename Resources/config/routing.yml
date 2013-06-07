@@ -1,0 +1,3 @@
+box_uk_qas_search:
+    pattern:  /address-search
+    defaults: { _controller: BoxUKQasBundle:ProWeb:search }
