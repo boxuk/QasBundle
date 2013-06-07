@@ -3,6 +3,7 @@
 namespace BoxUK\QasBundle\Repository;
 
 use BoxUK\QasBundle\ClientFactory\ProWebClientFactory;
+use BoxUK\QasBundle\Entity\QASearch;
 use Zend\Soap\Client;
 
 class ProWebRepository
@@ -20,24 +21,26 @@ class ProWebRepository
         $this->clientFactory = $clientFactory;
     }
 
-    public function findAddressesMatchingQuery($query)
+    public function findAddressesMatchingQuery(QASearch $qaSearch)
     {
-        $obj = new \stdClass();
-        $obj->Country = 'GBR';
-        $obj->Engine = array(
-            'Flatten' => true,
-            'Intensity' => 'Exact',
-            'Threshold' => "50",
-            'Timeout' => "1",
-            '_' => 'Singleline'
-        );
-        $obj->Layout = 'String';
-        $obj->Search = $query;
-
         $client = $this->clientFactory->createClient();
 
-        $response = $client->DoSearch($obj);
+        $results = array();
 
-        var_dump($response);exit;
+        try {
+            $response = $client->DoSearch($qaSearch);
+        } catch (\SoapFault $e) {
+            return $results;
+        }
+
+        if ($response->QAPicklist->Total == 0) {
+            return $results;
+        }
+
+        foreach ($response->QAPicklist->PicklistEntry as $entry) {
+            $results[] = $entry->PartialAddress;
+        }
+
+        return $results;
     }
 }

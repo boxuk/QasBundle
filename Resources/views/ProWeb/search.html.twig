@@ -1,0 +1,14 @@
+<div>
+    <h1>{{ "Matching addresses"|trans }}</h1>
+    <div class="results">
+        {%- if results is empty -%}
+            No results were found
+        {%- else -%}
+            <ul>
+                {%- for result in results -%}
+                    <li>{{ result }}</li>
+                {%- endfor -%}
+            </ul>
+        {%- endif -%}
+    </div>
+</div>

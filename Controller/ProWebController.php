@@ -3,6 +3,8 @@
 namespace BoxUK\QasBundle\Controller;
 
 use BoxUK\QasBundle\ClientFactory\ProWeb;
+use BoxUK\QasBundle\Entity\EngineType;
+use BoxUK\QasBundle\Entity\QASearch;
 use BoxUK\QasBundle\Repository\ProWebRepository;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\DependencyInjection\ContainerAware;
@@ -41,10 +43,21 @@ class ProWebController extends ContainerAware
     public function searchAction(Request $request)
     {
         $query = $request->get('query');
+        $country = $request->get('country', 'GBR');
 
-        $results = $this->repository->findAddressesMatchingQuery($query);
+        $qaSearch = new QASearch();
+        $qaSearch->Search = $query;
+        $qaSearch->Country = $country;
+        $qaSearch->Engine = new EngineType();
 
-        return $this->engine->renderResponse('BoxUKQasBundle:Search:index.html.twig', array('results' => $results));
+        $results = $this->repository->findAddressesMatchingQuery($qaSearch);
+
+        return $this->engine->renderResponse(
+            'BoxUKQasBundle:ProWeb:search.html.twig',
+            array(
+                'results' => $results
+            )
+        );
     }
 
 }

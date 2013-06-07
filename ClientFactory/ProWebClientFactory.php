@@ -28,7 +28,7 @@ class ProWebClientFactory
             'soap_version' => SOAP_1_1
         );
 
-        $client = new SoapClient($this->wsdl, $options);
+        $client = new SoapClient($this->wsdlUrl, $options);
 
         return $client;
     }
