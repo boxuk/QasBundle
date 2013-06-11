@@ -63,7 +63,7 @@ class ProWebController extends ContainerAware
         try {
             $results = $this->repository->findAddressesMatchingQuery($qaSearch);
         } catch (\Exception $e) {
-            if ($this->environment === 'dev') {
+            if ($this->environment !== 'prod') {
                 throw $e;
             }
 
