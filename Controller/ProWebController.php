@@ -6,6 +6,7 @@ use BoxUK\QasBundle\ClientFactory\ProWeb;
 use BoxUK\QasBundle\Entity\EngineType;
 use BoxUK\QasBundle\Entity\QASearch;
 use BoxUK\QasBundle\Repository\ProWebRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,6 +27,11 @@ class ProWebController extends ContainerAware
     private $repository;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var string
      */
     private $environment;
@@ -43,10 +49,20 @@ class ProWebController extends ContainerAware
     }
 
     /**
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger = null)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * Searches for addresses matching a given query using the QAS ProWeb service
      *
      * @param Request $request
-     * @return Response|JsonResponse
+     * @return JsonResponse|Response
+     *
+     * @throws \Exception
      */
     public function searchAction(Request $request)
     {
@@ -63,13 +79,14 @@ class ProWebController extends ContainerAware
         try {
             $results = $this->repository->findAddressesMatchingQuery($qaSearch);
         } catch (\Exception $e) {
+            if ($this->logger instanceof LoggerInterface) {
+                $this->logger->error($e->getMessage());
+            }
+
             if ($this->environment !== 'prod') {
                 throw $e;
             }
-
-            // @todo log exception
         }
-
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(array('results' => $results));
@@ -82,5 +99,4 @@ class ProWebController extends ContainerAware
             )
         );
     }
-
 }

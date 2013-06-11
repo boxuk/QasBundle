@@ -17,3 +17,4 @@ services:
         arguments: [@templating, @box_uk_qas.repository.pro_web, %kernel.environment%]
         calls:
             - [setContainer, ["@service_container"]]
+            - [setLogger, ["@logger"]]
