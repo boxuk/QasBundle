@@ -8,6 +8,7 @@ use BoxUK\QasBundle\Entity\QASearch;
 use BoxUK\QasBundle\Repository\ProWebRepository;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Zend\Soap\Client;
@@ -51,6 +52,10 @@ class ProWebController extends ContainerAware
         $qaSearch->Engine = new EngineType();
 
         $results = $this->repository->findAddressesMatchingQuery($qaSearch);
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse(array('results' => $results));
+        }
 
         return $this->engine->renderResponse(
             'BoxUKQasBundle:ProWeb:search.html.twig',

@@ -2,7 +2,7 @@
     <h1>{{ "Matching addresses"|trans }}</h1>
     <div class="results">
         {%- if results is empty -%}
-            No results were found
+            {{ "No results were found"|trans }}
         {%- else -%}
             <ul>
                 {%- for result in results -%}
