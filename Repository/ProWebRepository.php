@@ -27,11 +27,7 @@ class ProWebRepository
 
         $results = array();
 
-        try {
-            $response = $client->DoSearch($qaSearch);
-        } catch (\SoapFault $e) {
-            return $results;
-        }
+        $response = $client->DoSearch($qaSearch);
 
         if ($response->QAPicklist->Total == 0) {
             return $results;
