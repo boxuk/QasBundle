@@ -26,20 +26,27 @@ class ProWebController extends ContainerAware
     private $repository;
 
     /**
+     * @var string
+     */
+    private $environment;
+
+    /**
      * @param EngineInterface $engine
      * @param ProWebRepository $repository
+     * @param string $environment
      */
-    public function __construct(EngineInterface $engine, ProWebRepository $repository)
+    public function __construct(EngineInterface $engine, ProWebRepository $repository, $environment)
     {
         $this->engine = $engine;
         $this->repository = $repository;
+        $this->environment = $environment;
     }
 
     /**
      * Searches for addresses matching a given query using the QAS ProWeb service
      *
      * @param Request $request
-     * @return Response
+     * @return Response|JsonResponse
      */
     public function searchAction(Request $request)
     {
@@ -51,7 +58,18 @@ class ProWebController extends ContainerAware
         $qaSearch->Country = $country;
         $qaSearch->Engine = new EngineType();
 
-        $results = $this->repository->findAddressesMatchingQuery($qaSearch);
+        $results = array();
+
+        try {
+            $results = $this->repository->findAddressesMatchingQuery($qaSearch);
+        } catch (\Exception $e) {
+            if ($this->environment === 'dev') {
+                throw $e;
+            }
+
+            // @todo log exception
+        }
+
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(array('results' => $results));

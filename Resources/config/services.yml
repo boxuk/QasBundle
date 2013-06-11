@@ -14,4 +14,6 @@ services:
 
     box_uk_qas.controller.pro_web:
         class: %box_uk_qas.controller.pro_web.class%
-        arguments: [@templating, @box_uk_qas.repository.pro_web]
+        arguments: [@templating, @box_uk_qas.repository.pro_web, %kernel.environment%]
+        calls:
+            - [setContainer, ["@service_container"]]
