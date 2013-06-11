@@ -4,7 +4,6 @@ namespace BoxUK\QasBundle\Tests\Repository;
 
 use BoxUK\QasBundle\Entity\QASearch;
 use BoxUK\QasBundle\Repository\ProWebRepository;
-use MyProject\Proxies\__CG__\stdClass;
 
 class ProWebRepositoryTest extends \PHPUnit_Framework_TestCase
 {
