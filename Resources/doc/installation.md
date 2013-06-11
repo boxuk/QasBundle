@@ -65,6 +65,6 @@ In order to query the ProWeb API the bundle needs to know where the WSDL for the
 ``` yaml
 # app/config/config.yml
 box_uk_qas:
-    pro_web:
+    proweb:
         wsdl_url: http://your-server.com:2021/proweb.wsdl
 ```
