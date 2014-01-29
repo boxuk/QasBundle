@@ -15,7 +15,7 @@ Installation is handled through [Composer](http://getcomposer.org). In your proj
 ```js
 {
     "require": {
-        "boxuk/qas-bundle": "~1.0"
+        "boxuk/qas-bundle": "~0.1"
     }
 }
 ```
@@ -40,7 +40,7 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-        new BoxUK\QasBundle(),
+        new BoxUK\QasBundle\BoxUKQasBundle(),
     );
 }
 ```
