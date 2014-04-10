@@ -33,8 +33,13 @@ class ProWebRepository
             return $results;
         }
 
-        foreach ($response->QAPicklist->PicklistEntry as $entry) {
-            $results[] = $entry->PartialAddress;
+        // Because QAS will return an array for multiple results and an object for a single result
+        if (is_array($response->QAPicklist->PicklistEntry)) {
+            foreach ($response->QAPicklist->PicklistEntry as $entry) {
+                $results[] = $entry->PartialAddress;
+            }
+        } else if (is_object($response->QAPicklist->PicklistEntry)) {
+            $results[] = $response->QAPicklist->PicklistEntry->PartialAddress;
         }
 
         return $results;

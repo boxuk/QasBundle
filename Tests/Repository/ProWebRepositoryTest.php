@@ -32,9 +32,61 @@ class ProWebRepositoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return array
+     */
+    public function singleSearchResult()
+    {
+        $noResultsResponse = new \stdClass();
+        $noResultsResponse->QAPicklist->Total = 0;
+
+        $address = new \stdClass();
+        $address->PartialAddress = '1 Test Street, Town, CF11 8FG';
+
+        $resultsResponse = new \stdClass();
+        $resultsResponse->QAPicklist->Total = 1;
+        $resultsResponse->QAPicklist->PicklistEntry = $address;
+
+        return array (
+            array ($noResultsResponse, array()),
+            array ($resultsResponse, array('1 Test Street, Town, CF11 8FG'))
+        );
+    }
+
+    /**
      * @dataProvider SearchResults
+     * @param array $response The response
+     * @param array $expected The expected response
      */
     public function testFindAddressesMatchingQuery($response, $expected)
+    {
+        $client = $this->getMockBuilder('Zend\Soap\Client')
+            ->disableOriginalConstructor()
+            ->setMethods(array('DoSearch'))
+            ->getMock();
+
+        $client->expects($this->once())->method('DoSearch')->will($this->returnValue($response));
+
+        $factory = $this->getMockBuilder('BoxUK\QasBundle\ClientFactory\ProWebClientFactory')
+            ->disableOriginalConstructor()
+            ->setMethods(array('createClient'))
+            ->getMock();
+
+        $factory->expects($this->once())->method('createClient')->will($this->returnValue($client));
+
+        $repository = new ProWebRepository($factory);
+        $search = new QASearch();
+
+        $result = $repository->findAddressesMatchingQuery($search);
+
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * @dataProvider singleSearchResult
+     * @param array $response The response
+     * @param array $expected The expected response
+     */
+    public function testFindAddressWithSingleResult($response, $expected)
     {
         $client = $this->getMockBuilder('Zend\Soap\Client')
             ->disableOriginalConstructor()
